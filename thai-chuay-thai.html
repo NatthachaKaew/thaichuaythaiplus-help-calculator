@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เครื่องคำนวณสิทธิ์โครงการไทยช่วยไทย</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-200: #bfdbfe;
+    --blue-400: #60a5fa;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+    --blue-700: #1d4ed8;
+    --blue-800: #1e40af;
+    --blue-900: #1e3a8a;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --green-100: #dcfce7;
+    --green-500: #22c55e;
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --orange-100: #ffedd5;
+    --orange-500: #f97316;
+    --orange-600: #ea580c;
+    --red-100: #fee2e2;
+    --red-500: #ef4444;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 8px;
+    --bg: var(--gray-50);
+    --surface: var(--white);
+    --surface-2: var(--blue-50);
+    --text-primary: var(--gray-900);
+    --text-secondary: var(--gray-600);
+    --text-muted: var(--gray-400);
+    --border: var(--gray-200);
+    --input-bg: var(--white);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-2: #1c2333;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #484f58;
+      --border: #30363d;
+      --input-bg: #21262d;
+      --blue-50: #1c2333;
+      --blue-100: #1c2d3f;
+      --blue-500: #58a6ff;
+      --blue-600: #79b8ff;
+      --green-100: #1a2f23;
+      --green-600: #3fb950;
+      --green-700: #56d364;
+      --orange-100: #2d1f12;
+      --orange-600: #f0883e;
+      --red-100: #2d1515;
+      --red-500: #f85149;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Sarabun', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--blue-700) 0%, var(--blue-600) 40%, var(--blue-500) 100%);
+    padding: 40px 20px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 280px; height: 280px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .header-flag {
+    font-size: 2.4rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .header h1 {
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .header p {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+    font-weight: 400;
+    position: relative;
+    z-index: 1;
+  }
+  .ratio-badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  /* Layout */
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-lg); }
+
+  .card-header {
+    background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+    padding: 18px 22px;
+  }
+  .card-header h2 {
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .card-body { padding: 22px; }
+
+  /* Input group */
+  .input-group {
+    margin-bottom: 16px;
+  }
+  .input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 7px;
+    letter-spacing: 0.2px;
+  }
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap .unit {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    pointer-events: none;
+  }
+  input[type="number"] {
+    width: 100%;
+    padding: 12px 52px 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  }
+  input[type="number"]::placeholder { color: var(--text-muted); font-weight: 400; }
+
+  /* Result grid */
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .result-card {
+    background: var(--surface-2);
+    border: 1px solid var(--blue-200);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    text-align: center;
+    transition: transform 0.2s, opacity 0.3s;
+    animation: fadeIn 0.3s ease;
+  }
+  @media (prefers-color-scheme: dark) {
+    .result-card { border-color: var(--border); }
+  }
+  .result-card .rc-icon { font-size: 1.5rem; margin-bottom: 6px; display: block; }
+  .result-card .rc-label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .result-card .rc-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--blue-600);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  @media (prefers-color-scheme: dark) {
+    .result-card .rc-value { color: var(--blue-500); }
+  }
+  .result-card .rc-unit {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* Status banner */
+  .status-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: var(--radius-xs);
+    font-weight: 700;
+    font-size: 0.92rem;
+    margin-bottom: 14px;
+    animation: fadeIn 0.3s ease;
+  }
+  .status-ok {
+    background: var(--green-100);
+    color: var(--green-700);
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+  .status-warn {
+    background: var(--orange-100);
+    color: var(--orange-600);
+    border: 1px solid rgba(249,115,22,0.3);
+  }
+
+  /* Result items for section 2 */
+  .result-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+  }
+  .result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: var(--radius-xs);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+  .result-row.highlight {
+    background: linear-gradient(135deg, var(--blue-100), var(--blue-50));
+    border-color: var(--blue-200);
+  }
+  @media (prefers-color-scheme: dark) {
+    .result-row.highlight {
+      background: var(--surface-2);
+      border-color: var(--blue-800, #1e40af);
+    }
+  }
+  .result-row .rr-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .result-row .rr-icon { font-size: 1.1rem; }
+  .result-row .rr-label { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+  .result-row .rr-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--blue-600);
+    letter-spacing: -0.3px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .result-row .rr-value { color: var(--blue-500); }
+  }
+  .result-row.highlight .rr-value {
+    font-size: 1.2rem;
+    color: var(--blue-700);
+  }
+  @media (prefers-color-scheme: dark) {
+    .result-row.highlight .rr-value { color: var(--blue-400); }
+  }
+  .result-row.warn-row .rr-value { color: var(--orange-600); }
+  .result-row.zero-row .rr-value { color: var(--green-600); }
+
+  /* Placeholder */
+  .placeholder {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .placeholder span { font-size: 2rem; display: block; margin-bottom: 8px; opacity: 0.5; }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 20px;
+    border: none;
+    border-radius: var(--radius-xs);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-decoration: none;
+  }
+  .btn-reset {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1.5px solid var(--border);
+    flex: 1;
+    justify-content: center;
+  }
+  .btn-reset:hover { background: var(--gray-200); }
+  @media (prefers-color-scheme: dark) {
+    .btn-reset { background: var(--surface-2); color: var(--text-secondary); }
+    .btn-reset:hover { background: #2d333b; }
+  }
+  .btn-copy {
+    background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+    color: #fff;
+    flex: 1;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+  }
+  .btn-copy:hover {
+    background: linear-gradient(135deg, var(--blue-700), var(--blue-600));
+    box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+    transform: translateY(-1px);
+  }
+  .btn-copy:active { transform: translateY(0); }
+  .btn-copy.copied {
+    background: linear-gradient(135deg, var(--green-600), var(--green-500));
+    box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+  }
+
+  /* Actions card */
+  .actions-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .actions-card h3 {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+
+  /* Divider */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 20px 20px 28px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+  }
+  footer span { display: block; margin-bottom: 4px; }
+
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+  .animate-update { animation: pulse 0.25s ease; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .result-grid { grid-template-columns: 1fr 1fr; }
+    .btn-row { flex-direction: column; }
+    .btn { flex: unset; width: 100%; }
+    .card-body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span class="header-flag">🇹🇭</span>
+  <h1>เครื่องคำนวณสิทธิ์<br>โครงการไทยช่วยไทย</h1>
+  <p>คำนวณสิทธิ์การใช้จ่ายอย่างง่าย แม่นยำ รวดเร็ว</p>
+  <div class="ratio-badges">
+    <span class="badge">🏛️ รัฐจ่าย 60%</span>
+    <span class="badge">👤 ประชาชนจ่าย 40%</span>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Section 1 -->
+  <div class="card">
+    <div class="card-header">
+      <h2>💰 คำนวณยอดใช้จ่ายสูงสุดจากวงเงินรัฐคงเหลือ</h2>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <label for="s1-gov">วงเงินรัฐคงเหลือ</label>
+        <div class="input-wrap">
+          <input type="number" id="s1-gov" placeholder="เช่น 680.20" min="0" step="0.01" inputmode="decimal">
+          <span class="unit">บาท</span>
+        </div>
+      </div>
+      <div id="s1-result">
+        <div class="placeholder"><span>🛒</span>กรอกวงเงินรัฐคงเหลือเพื่อดูผลลัพธ์</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">ส่วนที่ 2</div>
+
+  <!-- Section 2 -->
+  <div class="card">
+    <div class="card-header">
+      <h2>🧮 คำนวณว่าต้องเติมเงินเท่าไหร่</h2>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <label for="s2-gov">วงเงินรัฐคงเหลือ</label>
+        <div class="input-wrap">
+          <input type="number" id="s2-gov" placeholder="เช่น 60" min="0" step="0.01" inputmode="decimal">
+          <span class="unit">บาท</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label for="s2-price">ราคาสินค้า</label>
+        <div class="input-wrap">
+          <input type="number" id="s2-price" placeholder="เช่น 200" min="0" step="0.01" inputmode="decimal">
+          <span class="unit">บาท</span>
+        </div>
+      </div>
+      <div id="s2-result">
+        <div class="placeholder"><span>🧾</span>กรอกข้อมูลทั้ง 2 ช่องเพื่อดูผลลัพธ์</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions-card">
+    <h3>⚡ การดำเนินการ</h3>
+    <div class="btn-row">
+      <button class="btn btn-reset" onclick="resetAll()">🔄 ล้างข้อมูลทั้งหมด</button>
+      <button class="btn btn-copy" id="copy-btn" onclick="copyResults()">📋 คัดลอกผลลัพธ์</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>🔒 ไม่มีการบันทึกข้อมูลส่วนตัวใดๆ — คำนวณในเครื่องของคุณเท่านั้น</span>
+  <span>เครื่องมือนี้จัดทำขึ้นเพื่อช่วยคำนวณสิทธิ์โครงการไทยช่วยไทย ไม่ใช่เว็บไซต์ทางการของภาครัฐ</span>
+</footer>
+
+<script>
+  function fmt(n) {
+    return Number(n).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function animateEl(el) {
+    el.classList.remove('animate-update');
+    void el.offsetWidth;
+    el.classList.add('animate-update');
+  }
+
+  // ========== Section 1 ==========
+  function calcS1() {
+    const govVal = parseFloat(document.getElementById('s1-gov').value);
+    const box = document.getElementById('s1-result');
+
+    if (isNaN(govVal) || govVal === 0 || document.getElementById('s1-gov').value === '') {
+      box.innerHTML = `<div class="placeholder"><span>🛒</span>กรอกวงเงินรัฐคงเหลือเพื่อดูผลลัพธ์</div>`;
+      return;
+    }
+
+    const maxBuy = govVal / 0.60;
+    const citizenPay = maxBuy * 0.40;
+    const govPay = govVal;
+
+    box.innerHTML = `
+      <div class="result-grid" id="s1-grid">
+        <div class="result-card">
+          <span class="rc-icon">🛒</span>
+          <div class="rc-label">สามารถซื้อสินค้าได้สูงสุด</div>
+          <div class="rc-value">${fmt(maxBuy)}</div>
+          <div class="rc-unit">บาท</div>
+        </div>
+        <div class="result-card">
+          <span class="rc-icon">👤</span>
+          <div class="rc-label">ประชาชนต้องจ่าย</div>
+          <div class="rc-value">${fmt(citizenPay)}</div>
+          <div class="rc-unit">บาท</div>
+        </div>
+        <div class="result-card">
+          <span class="rc-icon">🏛️</span>
+          <div class="rc-label">รัฐจะช่วยจ่าย</div>
+          <div class="rc-value">${fmt(govPay)}</div>
+          <div class="rc-unit">บาท</div>
+        </div>
+      </div>`;
+    animateEl(box);
+  }
+
+  // ========== Section 2 ==========
+  function calcS2() {
+    const govRem = parseFloat(document.getElementById('s2-gov').value);
+    const price   = parseFloat(document.getElementById('s2-price').value);
+    const box = document.getElementById('s2-result');
+
+    const govEmpty = isNaN(govRem) || document.getElementById('s2-gov').value === '';
+    const priceEmpty = isNaN(price) || document.getElementById('s2-price').value === '';
+
+    if (govEmpty || priceEmpty) {
+      box.innerHTML = `<div class="placeholder"><span>🧾</span>กรอกข้อมูลทั้ง 2 ช่องเพื่อดูผลลัพธ์</div>`;
+      return;
+    }
+
+    const govShouldPay  = price * 0.60;
+    const citizenNormal = price * 0.40;
+
+    if (govRem >= govShouldPay) {
+      // Sufficient
+      box.innerHTML = `
+        <div class="status-banner status-ok">✅ วงเงินรัฐเพียงพอ</div>
+        <div class="result-items">
+          <div class="result-row">
+            <div class="rr-left"><span class="rr-icon">🏛️</span><span class="rr-label">รัฐช่วยจ่าย</span></div>
+            <span class="rr-value">${fmt(govShouldPay)} บาท</span>
+          </div>
+          <div class="result-row">
+            <div class="rr-left"><span class="rr-icon">👤</span><span class="rr-label">ประชาชนจ่าย</span></div>
+            <span class="rr-value">${fmt(citizenNormal)} บาท</span>
+          </div>
+          <div class="result-row zero-row">
+            <div class="rr-left"><span class="rr-icon">💵</span><span class="rr-label">ต้องเติมเพิ่ม</span></div>
+            <span class="rr-value">0.00 บาท</span>
+          </div>
+        </div>`;
+    } else {
+      // Insufficient
+      const shortage = govShouldPay - govRem;
+      const citizenTotal = citizenNormal + shortage;
+      box.innerHTML = `
+        <div class="status-banner status-warn">⚠️ วงเงินรัฐไม่เพียงพอ</div>
+        <div class="result-items">
+          <div class="result-row">
+            <div class="rr-left"><span class="rr-icon">🏛️</span><span class="rr-label">รัฐช่วยได้</span></div>
+            <span class="rr-value">${fmt(govRem)} บาท</span>
+          </div>
+          <div class="result-row warn-row">
+            <div class="rr-left"><span class="rr-icon">💸</span><span class="rr-label">ต้องเติมเพิ่ม</span></div>
+            <span class="rr-value">${fmt(shortage)} บาท</span>
+          </div>
+          <div class="result-row highlight">
+            <div class="rr-left"><span class="rr-icon">👤</span><span class="rr-label">รวมที่ประชาชนต้องจ่าย</span></div>
+            <span class="rr-value">${fmt(citizenTotal)} บาท</span>
+          </div>
+        </div>`;
+    }
+    animateEl(box);
+  }
+
+  // ========== Reset ==========
+  function resetAll() {
+    ['s1-gov','s2-gov','s2-price'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('s1-result').innerHTML = `<div class="placeholder"><span>🛒</span>กรอกวงเงินรัฐคงเหลือเพื่อดูผลลัพธ์</div>`;
+    document.getElementById('s2-result').innerHTML = `<div class="placeholder"><span>🧾</span>กรอกข้อมูลทั้ง 2 ช่องเพื่อดูผลลัพธ์</div>`;
+    document.getElementById('s1-gov').focus();
+  }
+
+  // ========== Copy ==========
+  function copyResults() {
+    const s1Gov   = parseFloat(document.getElementById('s1-gov').value);
+    const s2Gov   = parseFloat(document.getElementById('s2-gov').value);
+    const s2Price = parseFloat(document.getElementById('s2-price').value);
+
+    let lines = ['📊 ผลการคำนวณโครงการไทยช่วยไทย', '─'.repeat(36), ''];
+
+    let hasS1 = false, hasS2 = false;
+
+    if (!isNaN(s1Gov) && s1Gov > 0) {
+      hasS1 = true;
+      const maxBuy = s1Gov / 0.60;
+      lines.push('💰 ส่วนที่ 1: ยอดใช้จ่ายสูงสุด');
+      lines.push(`   วงเงินรัฐคงเหลือ : ${fmt(s1Gov)} บาท`);
+      lines.push(`🛒 ซื้อสินค้าได้สูงสุด : ${fmt(maxBuy)} บาท`);
+      lines.push(`👤 ประชาชนจ่าย : ${fmt(maxBuy * 0.40)} บาท`);
+      lines.push(`🏛️ รัฐช่วยจ่าย : ${fmt(s1Gov)} บาท`);
+      lines.push('');
+    }
+
+    if (!isNaN(s2Gov) && !isNaN(s2Price)) {
+      hasS2 = true;
+      const govShouldPay  = s2Price * 0.60;
+      const citizenNormal = s2Price * 0.40;
+      lines.push('🧮 ส่วนที่ 2: การเติมเงิน');
+      lines.push(`   วงเงินรัฐคงเหลือ : ${fmt(s2Gov)} บาท`);
+      lines.push(`   ราคาสินค้า : ${fmt(s2Price)} บาท`);
+      if (s2Gov >= govShouldPay) {
+        lines.push('✅ วงเงินรัฐเพียงพอ');
+        lines.push(`🏛️ รัฐช่วยจ่าย : ${fmt(govShouldPay)} บาท`);
+        lines.push(`👤 ประชาชนจ่าย : ${fmt(citizenNormal)} บาท`);
+        lines.push(`💵 ต้องเติมเพิ่ม : 0.00 บาท`);
+      } else {
+        const shortage = govShouldPay - s2Gov;
+        const citizenTotal = citizenNormal + shortage;
+        lines.push('⚠️ วงเงินรัฐไม่เพียงพอ');
+        lines.push(`🏛️ รัฐช่วยได้ : ${fmt(s2Gov)} บาท`);
+        lines.push(`💸 ต้องเติมเพิ่ม : ${fmt(shortage)} บาท`);
+        lines.push(`👤 รวมประชาชนต้องจ่าย : ${fmt(citizenTotal)} บาท`);
+      }
+      lines.push('');
+    }
+
+    if (!hasS1 && !hasS2) {
+      lines.push('(ยังไม่มีข้อมูลที่คำนวณได้)');
+    }
+
+    lines.push('─'.repeat(36));
+    lines.push('คำนวณโดย: เครื่องคำนวณสิทธิ์โครงการไทยช่วยไทย');
+    lines.push('ไม่ใช่เว็บไซต์ทางการของภาครัฐ');
+
+    const text = lines.join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.classList.add('copied');
+      btn.innerHTML = '✅ คัดลอกแล้ว!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '📋 คัดลอกผลลัพธ์';
+      }, 2200);
+    }).catch(() => {
+      alert('ไม่สามารถคัดลอกได้ กรุณาลองใหม่อีกครั้ง');
+    });
+  }
+
+  // Real-time listeners
+  document.getElementById('s1-gov').addEventListener('input', calcS1);
+  document.getElementById('s2-gov').addEventListener('input', calcS2);
+  document.getElementById('s2-price').addEventListener('input', calcS2);
+</script>
+</body>
+</html>
